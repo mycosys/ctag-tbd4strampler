@@ -18,6 +18,9 @@ jobs:
           cp sdkconfig.defaults.mk1 sdkconfig.defaults
       - name: esp-idf build
         uses: espressif/esp-idf-ci-action@v1.1.0
+        env:
+          # This forces the component manager to ignore strict package mapping conflicts
+          IDF_COMPONENT_MANAGER: "0"
         with:
           esp_idf_version: v5.1.4
           target: esp32
