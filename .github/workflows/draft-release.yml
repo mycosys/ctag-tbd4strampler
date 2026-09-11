@@ -5,7 +5,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -13,24 +12,23 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          fetch-depth: 0
       - name: Copy config
         run: |
-          cp sdkconfig.defaults.mk1 sdkconfig.defaults
+          cp sdkconfig.defaults.strampler sdkconfig.defaults
       - name: esp-idf build
         uses: espressif/esp-idf-ci-action@v1.1.0
-       ## env:
-          # This forces the component manager to ignore strict package mapping conflicts
-        ##  IDF_COMPONENT_MANAGER: "0"
         with:
-          esp_idf_version: v5.1.4
+          esp_idf_version: v5.1.1
           target: esp32
           command: idf.py update-dependencies build
       - name: Archive binaries
         run: |
-          zip --junk-paths binaries /app/ctag-fh-kiel/ctag-tbd/build/*.bin /app/ctag-fh-kiel/ctag-tbd/build/bootloader/*.bin /app/ctag-fh-kiel/ctag-tbd/build/partition_table/*.bin
+          zip --junk-paths binaries ${GITHUB_WORKSPACE}/build/*.bin ${GITHUB_WORKSPACE}/build/bootloader/*.bin ${GITHUB_WORKSPACE}/build/partition_table/*.bin
       - name: Upload binary
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: binaries.zip
           # A file, directory or wildcard pattern that describes what to upload
           path: ./binaries.zip
+          archive: false
